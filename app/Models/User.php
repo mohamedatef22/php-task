@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    const ADMIN_ROLE = 'admin';
+    const EMPLOYEE_ROLE = 'employee';
+    const CUSTOMER_ROLE = 'customer';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +25,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -41,4 +46,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function myCustomers()
+    {
+        return $this->hasMany(User::class,'employee_id');   
+    }
+
+    public function myEmployee()
+    {
+        return $this->belongsTo(User::class,'employee_id');
+    }
+
+    public function employeeActions()
+    {
+        return $this->hasMany(CustomerAction::class,'employee_id');
+    }
+    
+    public function customerActions()
+    {
+        return $this->hasMany(CustomerAction::class,'customer_id');
+    }
 }
